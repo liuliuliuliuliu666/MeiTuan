@@ -1,0 +1,19 @@
+// 导航背景色
+@navColor: #06C1AD;
+
+// 箭头混合
+.arrowf(@w:10px,@c:#fff,@dir:top){
+    // 兼容行内元素和块元素
+    font-size: 0;
+    width: 0;
+    border: @w solid transparent;
+    // 设置特殊边颜色
+}
+// 清除浮动
+.clearfix{
+    &:after{
+        content: '';
+        display: block;
+        clear: both;
+    }
+}
