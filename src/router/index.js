@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import List from '../views/List.vue'
 import Detail from '../views/Detail.vue'
+import Login from '../views/Login.vue'
 
 Vue.use(VueRouter)
 
@@ -10,7 +11,8 @@ Vue.use(VueRouter)
 const routes = [
   { path: '/list/:id', component: List },
   { path: '/detail/:id', component: Detail },
-  { path: '*', component: Home }
+  { path: '/Home', component: Home },
+  { path: '*', component: Login }
 ]
 
 // 定义路由

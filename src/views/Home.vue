@@ -1,5 +1,17 @@
 <template>
   <div>
+      <div class="header">
+      <div class="go-back" @click="$router.go(-1)">
+        <span class="arrow">
+          <span class="arrow green"></span>
+        </span>
+      </div>
+      <div class="title">仿美团移动界面</div>
+      <div class="login" @click="logout">退出</div>
+      </div>
+    <div class="search" v-show="!$route.fullPath.includes('/detail/')">
+      <input type="text" v-model="msg" @keyup="filterMsg" placeholder="请输入搜索关键词" />
+    </div>
     <!-- <h1>home page--{{$store.state.search}}</h1> -->
     <!-- 分类模块 -->
     <ul class="home-types">
@@ -32,62 +44,113 @@
 
 <style lang="less" scoped>
 @import '../assets/common.less';
-.home-types{
+.header {
+  background: @navColor;
+  display: flex;
+  height: 60px;
+  line-height: 60px;
+  color: #fff;
+  text-align: center;
+  .title {
+    flex: 1;
+    font-size: 24px;
+  }
+  .go-back,
+  .login {
+    width: 60px;
+  }
+  .go-back {
+    position: relative;
+    .arrow {
+      position: absolute;
+      .arrowf(10px, #fff, right);
+      border-right-color: white;
+      top: 22px;
+      right: 25px;
+      .green {
+        border-right-color: @navColor;
+        position: absolute;
+        top: -10px;
+        right: -12px;
+      }
+    }
+  }
+  .login {
+    font-size: 16px;
+  }
+}
+.search {
+  background: #fff;
+  padding: 10px 20px;
+  display: flex;
+  input {
+    background: #efefef;
+    font-size: 14px;
+    border: none;
+    outline: none;
+    border-radius: 18px;
+    padding: 10px 20px;
+    display: block;
+    width: 100%;
+    flex: 1;
+  }
+}
+.home-types {
   .clearfix;
   padding: 10px 0;
-  li{
+  li {
     list-style: none;
     width: 20%;
     float: left;
     text-align: center;
   }
-  img{
+  img {
     width: 60%;
   }
-  p{
+  p {
     font-size: 12px;
     color: #666;
     padding: px 0 8px;
   }
 }
-.ad{
+.ad {
   display: flex;
   background: #fff;
   margin-top: 10px;
   padding: 10px 0;
-  li{
+  li {
     flex: 1;
     list-style: none;
     text-align: center;
     border-right: 1px solid #ccc;
-    &:last-child{
+    &:last-child {
       border-right: none;
     }
-    h3{
+    h3 {
       font-size: 16px;
     }
-    p{
+    p {
       font-size: 12px;
       color: #666;
     }
-    img{
+    img {
       width: 60%;
     }
-    .color-0{
+    .color-0 {
       color: red;
     }
-    .color-1{
+    .color-1 {
       color: green;
     }
-    .color-2{
+    .color-2 {
       color: purple;
     }
   }
 }
-.home-list{
+.home-list {
   margin-top: 10px;
   background: #fff;
-  .guess-title{
+  .guess-title {
     font-size: 20px;
     padding: 10px 0;
     margin: 0 10px;
@@ -119,22 +182,60 @@ export default {
         { text: '火车票', id: '10', img: '10.png' }
       ],
       ad: [],
-      list: []
+      list: [],
+      msg: ''
     }
   },
   // 组件创建完成请求数据
   created () {
     // 请求数据
     this.$http
-    // get请求
-      .get('/data/home.json')
-    // 监听数据返回
+      // get请求
+      // .get('/data/home.json')
+      .get('/ad')
+      // 监听数据返回
       .then(({ data }) => {
         // console.log(data)
         // 存储数据
-        this.ad = data.ad
-        this.list = data.list
+        this.ad = data
       })
+    this.$http
+      .get('/list')
+      .then(({ data }) => {
+        this.list = data
+      })
+  },
+  methods: {
+    // 展示搜索结果
+    showSearchResult () {
+      // 发布消息
+      this.$store.commit('updateSearch', this.msg)
+      // 清空消息
+      this.msg = ''
+    },
+    logout () {
+      this.$router.push('/Login')
+    },
+    filterMsg () {
+      const filterList = this.list.filter(item => {
+        return item.title.indexOf(this.msg) !== -1
+      })
+      this.list = filterList
+      // this.msg = ''
+    },
+    debounceFliterMsg (fn, delay) {
+      let timer = null
+      return function () {
+        const context = this
+        const arg = arguments
+        if (timer) {
+          clearTimeout(timer)
+        }
+        timer = setTimeout(() => {
+          fn.apply(context, arg)
+        }, delay)
+      }
+    }
   }
 }
 </script>
